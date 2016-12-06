@@ -566,7 +566,8 @@ static void bcl_poll_ibat_low(struct work_struct *work)
 	return;
 
 reschedule_ibat:
-	schedule_delayed_work(&perph_data->poll_work,
+	queue_delayed_work(system_power_efficient_wq,
+		&perph_data->poll_work,
 		msecs_to_jiffies(perph_data->polling_delay_ms));
 	return;
 }
@@ -599,7 +600,8 @@ static void bcl_poll_vbat_high(struct work_struct *work)
 	return;
 
 reschedule_vbat:
-	schedule_delayed_work(&perph_data->poll_work,
+	queue_delayed_work(system_power_efficient_wq,
+		&perph_data->poll_work,
 		msecs_to_jiffies(perph_data->polling_delay_ms));
 	return;
 }
