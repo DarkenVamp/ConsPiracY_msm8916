@@ -191,7 +191,7 @@ static void repopulate_stats(int cpu)
 
 void trigger_cpu_pwr_stats_calc(void)
 {
-	int cpu;
+	int cpu, rc;
 	static long prev_temp[NR_CPUS];
 	static DEFINE_SPINLOCK(update_lock);
 	struct cpu_activity_info *cpu_node;
@@ -206,8 +206,13 @@ void trigger_cpu_pwr_stats_calc(void)
 		if (cpu_node->sensor_id < 0)
 			continue;
 
-		if (cpu_node->temp == prev_temp[cpu])
-			sensor_get_temp(cpu_node->sensor_id, &cpu_node->temp);
+		if (cpu_node->temp == prev_temp[cpu]) {
+			rc = sensor_get_temp(cpu_node->sensor_id, &temp);
+			if (rc) {
+				pr_err("msm-core: The sensor reported invalid data!");
+				temp = DEFAULT_TEMP;
+			}
+
 		prev_temp[cpu] = cpu_node->temp;
 
 		if (activate_power_table && cpu_node->sp->table)
