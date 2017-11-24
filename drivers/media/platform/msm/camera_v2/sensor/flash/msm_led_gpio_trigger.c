@@ -431,36 +431,6 @@ ERROR1:
 	return rc;
 }
 
-#ifdef CONFIG_DEBUG_FS
-static int set_led_gpio_status(void *data, u64 val)
-{
-	struct msm_led_flash_ctrl_t *fctrl =
-		 (struct msm_led_flash_ctrl_t *)data;
-	int rc = -1;
-	pr_debug("set_led_status: Enter val: %llu", val);
-	if (!fctrl) {
-		pr_err("set_led_status: fctrl is NULL");
-		return rc;
-	}
-	if (!fctrl->func_tbl) {
-		pr_err("set_led_status: fctrl->func_tbl is NULL");
-		return rc;
-	}
-	if (val == 0) {
-		pr_debug("set_led_status: val is disable");
-		rc = msm_flash_led_off(fctrl);
-	} else {
-		pr_debug("set_led_status: val is enable");
-		rc = msm_flash_led_low(fctrl);
-	}
-
-	return rc;
-}
-
-DEFINE_SIMPLE_ATTRIBUTE(ledflashdbg_fops,
-	NULL, set_led_gpio_status, "%llu\n");
-#endif
-
 int msm_flash_gpio_probe(struct platform_device *pdev,
 	const void *data)
 {
